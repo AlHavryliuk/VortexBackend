@@ -45,10 +45,10 @@ const addGame = async (req, res, next) => {
       throw HttpError(409, "The user already owns this game");
     }
     await Game.findOneAndUpdate(game._id, { owners: [...game.owners, owner] });
-    res.status(201).json({ message: "Game is added successfully" });
+    res.status(201).json(req.body);
   } else {
     await Game.create({ ...req.body, owners: [owner] });
-    res.status(201).json({ message: "Game is added successfully" });
+    res.status(201).json(req.body);
   }
 };
 

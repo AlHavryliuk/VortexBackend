@@ -52,7 +52,7 @@ const resendVerify = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { nickname, email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) throw HttpError(401, "Incorrect email or password");
   const passwordCompare = await bcrypt.compare(password, user.password);
@@ -62,6 +62,8 @@ const login = async (req, res) => {
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
   await User.findByIdAndUpdate(user.id, { token });
   res.json({
+    email,
+    nickname,
     token,
   });
 };

@@ -33,7 +33,7 @@ const updateOwner = async (req, res, next) => {
   if (!game) throw HttpError(404, "Game not found");
   const newOwners = game.owners.filter((game) => !game.equals(userID));
   await Game.findByIdAndUpdate(game._id, { owners: newOwners });
-  res.json({ Message: "Game removed" });
+  res.json({ Message: "Game removed", gameID });
 };
 
 const addGame = async (req, res, next) => {

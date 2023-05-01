@@ -52,16 +52,18 @@ const resendVerify = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { nickname, email, password } = req.body;
+  const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) throw HttpError(401, "Incorrect email or password");
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) throw HttpError(401, "Invalid password");
   const payload = { id: user.id };
   const { SECRET_KEY } = process.env;
+  const { _id, nickname } = user;
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
   await User.findByIdAndUpdate(user.id, { token });
   res.json({
+    _id,
     email,
     nickname,
     token,

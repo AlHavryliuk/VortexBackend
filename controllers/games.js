@@ -4,7 +4,7 @@ import { Game } from "../models/game.js";
 
 const getAllGames = async (req, res, next) => {
   const { _id: owner } = req.user;
-  const { page = 1, limit = 5 } = req.query;
+  const { page = 1, limit = 6 } = req.query;
   const skip = (page - 1) * limit;
   const filter = {
     owners: owner,

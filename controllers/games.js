@@ -2,18 +2,20 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { Game } from "../models/game.js";
 
-const getAllGames = async (req, res, next) => {
+const getGames = async (req, res, next) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 6 } = req.query;
   const skip = (page - 1) * limit;
   const filter = {
     owners: owner,
   };
+
+  const totalGames = await Game.countDocuments(filter);
   const contactList = await Game.find(filter, "-createdAt -updatedAt", {
     skip,
     limit,
   });
-  res.json(contactList);
+  res.json({ games: contactList, totalPages: Math.ceil(totalGames / limit) });
 };
 
 const getGameById = async (req, res, next) => {
@@ -52,7 +54,7 @@ const addGame = async (req, res, next) => {
   }
 };
 
-export const getAllGamesCtrl = ctrlWrapper(getAllGames);
+export const getGamesCtrl = ctrlWrapper(getGames);
 export const getGameByIdCtrl = ctrlWrapper(getGameById);
 export const updateOwnerCtrl = ctrlWrapper(updateOwner);
 export const addGameCtrl = ctrlWrapper(addGame);

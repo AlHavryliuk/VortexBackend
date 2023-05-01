@@ -1,7 +1,7 @@
 import express from "express";
 import {
   addGameCtrl,
-  getAllGamesCtrl,
+  getGamesCtrl,
   getGameByIdCtrl,
   updateOwnerCtrl,
 } from "../../controllers/games.js";
@@ -11,7 +11,7 @@ import { addGameScheme } from "../../models/game.js";
 
 const gamesRouter = express.Router();
 
-gamesRouter.get("/", authenticate, getAllGamesCtrl);
+gamesRouter.get("/", authenticate, getGamesCtrl);
 
 gamesRouter.get("/:gameID", authenticate, getGameByIdCtrl);
 

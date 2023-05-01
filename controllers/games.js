@@ -19,7 +19,7 @@ const getAllGames = async (req, res, next) => {
 const getGameById = async (req, res, next) => {
   const { gameID } = req.params;
   const { _id } = req.user;
-  const game = await Game.findOne(gameID);
+  const game = await Game.findOne({ gameID });
   if (!game || !game.owners.includes(_id))
     throw HttpError(404, "Game not found");
   const { name, backdrop, rating } = game;

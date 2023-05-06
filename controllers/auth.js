@@ -60,7 +60,7 @@ const login = async (req, res) => {
   const payload = { id: user.id };
   const { SECRET_KEY } = process.env;
   const { _id, nickname } = user;
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
   await User.findByIdAndUpdate(user.id, { token });
   res.json({
     ownerID: _id,
@@ -68,6 +68,32 @@ const login = async (req, res) => {
     nickname,
     token,
   });
+};
+
+const googleAuth = async (req, res) => {
+  const { credential } = req.body;
+  const decoded = jwt.decode(credential);
+  if (!decoded) throw HttpError(401, "Invalid token");
+  const { email, name } = decoded;
+  const { SECRET_KEY } = process.env;
+  const user = await User.findOne({ email });
+  const payload = { id: user.id };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
+  if (!user) {
+    const password = `${nanoid(4)}${name}`;
+    const hashPassword = await bcrypt.hash(password, 10);
+    await User.create({
+      email,
+      nickname: name,
+      password: hashPassword,
+      verify: true,
+      token,
+    });
+    const { _id } = await User.findOne({ email });
+    res.json({ ownerID: _id, email, nickname: name, token });
+  }
+  await User.findByIdAndUpdate(user.id, { token });
+  res.json({ ownerID: user._id, email, nickname: user.nickname, token });
 };
 
 const logout = async (req, res) => {
@@ -90,4 +116,5 @@ export const loginCtrl = ctrlWrapper(login);
 export const getCurrentCtrl = ctrlWrapper(getCurrent);
 export const logoutCtrl = ctrlWrapper(logout);
 export const verifyCtrl = ctrlWrapper(userVerify);
+export const googleAuthCtrl = ctrlWrapper(googleAuth);
 export const resendVerifyCtrl = ctrlWrapper(resendVerify);

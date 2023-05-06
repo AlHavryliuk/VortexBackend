@@ -3,6 +3,7 @@ import validateBody from "../../middlewares/validateBody.js";
 import { emailScheme, loginScheme, registerScheme } from "../../models/user.js";
 import {
   getCurrentCtrl,
+  googleAuthCtrl,
   loginCtrl,
   logoutCtrl,
   registerCtrl,
@@ -15,6 +16,7 @@ export const authRouter = express.Router();
 
 authRouter.post("/register", validateBody(registerScheme), registerCtrl);
 authRouter.post("/login", validateBody(loginScheme), loginCtrl);
+authRouter.post("/google", googleAuthCtrl);
 authRouter.post("/logout", authenticate, logoutCtrl);
 authRouter.get("/current", authenticate, getCurrentCtrl);
 authRouter.get("/verify/:verificationCode", verifyCtrl);

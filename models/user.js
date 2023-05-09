@@ -9,6 +9,7 @@ const userSchema = new Schema({
     type: String,
     minlength: 2,
     required: [true, "Nickname is required"],
+    unique: true,
   },
   password: {
     type: String,

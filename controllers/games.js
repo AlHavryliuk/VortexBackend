@@ -2,7 +2,7 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { Game } from "../models/game.js";
 
-const getGames = async (req, res, next) => {
+const getGames = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 6 } = req.query;
   const skip = (page - 1) * limit;
@@ -18,7 +18,7 @@ const getGames = async (req, res, next) => {
   res.json({ games: contactList, totalPages: Math.ceil(totalGames / limit) });
 };
 
-const getGameById = async (req, res, next) => {
+const getGameById = async (req, res) => {
   const { gameID } = req.params;
   const { _id } = req.user;
   const game = await Game.findOne({ gameID });
@@ -28,7 +28,7 @@ const getGameById = async (req, res, next) => {
   res.json({ gameID, name, backdrop, rating });
 };
 
-const updateOwner = async (req, res, next) => {
+const updateOwner = async (req, res) => {
   const { gameID } = req.params;
   const { _id: userID } = req.user;
   const game = await Game.findOne({ gameID });
@@ -38,7 +38,7 @@ const updateOwner = async (req, res, next) => {
   res.json({ Message: "Game removed", gameID });
 };
 
-const addGame = async (req, res, next) => {
+const addGame = async (req, res) => {
   const { _id: owner } = req.user;
   const { gameID } = req.body;
   const game = await Game.findOne({ gameID });

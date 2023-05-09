@@ -1,6 +1,6 @@
 import express from "express";
-import { authenticate } from "../../middlewares/authenticate";
-import { patchUserNameCtrl } from "../../controllers/users";
+import { authenticate } from "../../middlewares/authenticate.js";
+import { patchUserNameCtrl } from "../../controllers/users.js";
 
 const usersRouter = express.Router();
 

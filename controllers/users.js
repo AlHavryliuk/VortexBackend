@@ -5,7 +5,7 @@ import { User } from "../models/user";
 const patchUserName = async (req, res) => {
   const { nickname } = req.body;
   const hasAlreadyAdded = await User.findOne({ nickname });
-  if (hasAlreadyAdded)
+  if (hasAlreadyAdded || nickname.trim().length === 0)
     throw HttpError(409, "User with this name is already added");
   const result = await User.findOneAndUpdate(
     { nickname },

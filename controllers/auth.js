@@ -59,7 +59,7 @@ const login = async (req, res) => {
   if (!passwordCompare) throw HttpError(401, "Invalid password");
   const payload = { id: user.id };
   const { SECRET_KEY } = process.env;
-  const { _id, nickname } = user;
+  const { _id, nickname, avatarURL } = user;
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
   await User.findByIdAndUpdate(user.id, { token });
   res.json({
@@ -67,6 +67,7 @@ const login = async (req, res) => {
     email,
     nickname,
     token,
+    avatarURL,
   });
 };
 
@@ -90,10 +91,22 @@ const googleAuth = async (req, res) => {
       token,
     });
     const { _id } = await User.findOne({ email });
-    res.json({ ownerID: _id, email, nickname: name, token });
+    res.json({
+      ownerID: _id,
+      email,
+      nickname: name,
+      token,
+      avatarURL: user.avatarURL,
+    });
   }
   await User.findByIdAndUpdate(user.id, { token });
-  res.json({ ownerID: user._id, email, nickname: user.nickname, token });
+  res.json({
+    ownerID: user._id,
+    email,
+    nickname: user.nickname,
+    token,
+    avatarURL: user.avatarURL,
+  });
 };
 
 const logout = async (req, res) => {

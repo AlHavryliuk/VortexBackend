@@ -42,7 +42,7 @@ const userSchema = new Schema({
 });
 
 export const registerScheme = Joi.object({
-  nickname: Joi.string().min(2).required(),
+  nickname: Joi.string().min(2),
   password: Joi.string().min(6).required(),
   email: Joi.string().pattern(emailRegex).required(),
 });

@@ -78,8 +78,7 @@ const googleAuth = async (req, res) => {
   const { email, name } = decoded;
   const { SECRET_KEY } = process.env;
   const user = await User.findOne({ email });
-  const payload = { id: user.id };
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
+
   if (!user) {
     const password = `${nanoid(4)}${name}`;
     const hashPassword = await bcrypt.hash(password, 10);
@@ -88,18 +87,23 @@ const googleAuth = async (req, res) => {
       nickname: name,
       password: hashPassword,
       verify: true,
-      token,
     });
-    const { _id } = await User.findOne({ email });
+    const { _id, avatarURL } = await User.findOne({ email });
+    const payload = { id: _id };
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
     res.json({
       ownerID: _id,
       email,
       nickname: name,
       token,
-      avatarURL: user.avatarURL,
+      avatarURL,
     });
+    return;
   }
-  await User.findByIdAndUpdate(user.id, { token });
+  
+  const payload = { id: user._id };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
+  await User.findByIdAndUpdate(user._id, { token });
   res.json({
     ownerID: user._id,
     email,

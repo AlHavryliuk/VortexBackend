@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { Schema, model } from "mongoose";
 import { handleMongooseError } from "../helpers/handleMongooseError.js";
+import { nanoid } from "nanoid";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -8,7 +9,7 @@ const userSchema = new Schema({
   nickname: {
     type: String,
     minlength: 2,
-    required: [true, "Nickname is required"],
+    default: `user${nanoid(5)}`,
     unique: true,
   },
   password: {

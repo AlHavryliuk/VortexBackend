@@ -91,6 +91,7 @@ const googleAuth = async (req, res) => {
     const { _id, avatarURL } = await User.findOne({ email });
     const payload = { id: _id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
+    await User.findByIdAndUpdate(user._id, { token });
     res.json({
       ownerID: _id,
       email,
@@ -100,7 +101,7 @@ const googleAuth = async (req, res) => {
     });
     return;
   }
-  
+
   const payload = { id: user._id };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
   await User.findByIdAndUpdate(user._id, { token });

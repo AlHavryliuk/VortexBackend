@@ -39,6 +39,10 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+  role: {
+    type: String,
+    default: "user",
+  },
 });
 
 export const registerScheme = Joi.object({

@@ -59,7 +59,7 @@ const login = async (req, res) => {
   if (!passwordCompare) throw HttpError(401, "Invalid password");
   const payload = { id: user.id };
   const { SECRET_KEY } = process.env;
-  const { _id, nickname, avatarURL } = user;
+  const { _id, nickname, avatarURL, role } = user;
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
   await User.findByIdAndUpdate(user.id, { token });
   res.json({
@@ -68,6 +68,7 @@ const login = async (req, res) => {
     nickname,
     token,
     avatarURL,
+    role,
   });
 };
 
@@ -88,7 +89,7 @@ const googleAuth = async (req, res) => {
       password: hashPassword,
       verify: true,
     });
-    const { _id, avatarURL } = await User.findOne({ email });
+    const { _id, avatarURL, role } = await User.findOne({ email });
     const payload = { id: _id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "161h" });
     await User.findByIdAndUpdate(_id, { token });
@@ -97,6 +98,7 @@ const googleAuth = async (req, res) => {
       email,
       nickname: name,
       token,
+      role,
       avatarURL,
     });
     return;
@@ -110,6 +112,7 @@ const googleAuth = async (req, res) => {
     email,
     nickname: user.nickname,
     token,
+    role: user.role,
     avatarURL: user.avatarURL,
   });
 };

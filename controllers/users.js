@@ -6,6 +6,21 @@ import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { User } from "../models/user.js";
 import validateFile from "../helpers/imgIsValid.js";
 
+const getUserList = async (req, res) => {
+  const { role } = req.user;
+  if (role !== "admin") throw HttpError(403);
+  const { page = 1, limit = 12 } = req.query;
+  const skip = (page - 1) * limit;
+  const filter = {};
+  const totalGames = await User.countDocuments(filter);
+  const userList = await User.find(filter, "email nickname role avatarURL", {
+    skip,
+    limit,
+  });
+
+  res.json({ userList, totalPages: Math.ceil(totalGames / limit) });
+};
+
 const patchUserName = async (req, res) => {
   const { nickname } = req.body;
   const { _id: id } = req.user;
@@ -36,3 +51,4 @@ const patchUserAvatar = async (req, res, next) => {
 
 export const patchUserNameCtrl = ctrlWrapper(patchUserName);
 export const patchUserAvatarCtrl = ctrlWrapper(patchUserAvatar);
+export const getUserListCtrl = ctrlWrapper(getUserList);
